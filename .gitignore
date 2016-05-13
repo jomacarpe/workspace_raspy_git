@@ -79,3 +79,4 @@ prueba/alarma.c
 *.mk
 *.d
 *.o
+*.launch

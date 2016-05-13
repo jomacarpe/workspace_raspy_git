@@ -76,7 +76,7 @@ int button2_pushed (fsm_t* this) { if(flags==2){return (1);}else {return 0;} }
 int button3_pushed (fsm_t* this) { if(flags==3){return (1);}else {return 0;} }
 int button4_pushed (fsm_t* this) { if(flags==4){return (1);}else {return 0;} }
 
-int EVENT_BTN_START_END(fsm_t* this) { if(flags==10){return (1);}else {return 0;} }
+int EVENT_BTN_START_END(fsm_t* this) { if(flags==10){delay(anti_rebote); return (1);}else {return 0;} }
 
 
 void all_Led_Of(fsm_t* this){
@@ -238,6 +238,12 @@ int EVENT_END_GAME(fsm_t* this,tmr_t* this1){
 
 void printData(fsm_t* this, tmr_t* this1){
 	printf("tiempo queda = %lld\n", game_time);
+	printf("Rondas = %d\n", round);
+	printf("Fallos = %d\n", fallos);
+	delay(anti_rebote);
+	flags=0;
+
+
 	  //  fflush(stdout); // Will now print everything in the stout buffer
 }
 

@@ -80,3 +80,7 @@ prueba/alarma.c
 *.d
 *.o
 *.launch
+*.libhover
+prueba/Debug/prueba
+prueba/Debug/prueba
+prueba/Debug/prueba

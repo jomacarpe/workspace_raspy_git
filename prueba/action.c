@@ -157,7 +157,7 @@ int time_out (fsm_t* this) { return (flags & FLAG_TIMER); }
 
 int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
-		printf("pulso algo"); fflush(stdout);
+		//printf("pulso algo"); fflush(stdout);
 	if(ledOn == LED_1){ if(flags==1){
 		//readTime(this1);
 					fallos++;

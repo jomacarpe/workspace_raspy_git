@@ -65,18 +65,18 @@ void button_1_isr (void) { flags = 1; }
 void button_2_isr (void) { flags = 2; }
 void button_3_isr (void) { flags = 3; }
 void button_4_isr (void) { flags = 4; }
-void button_start_isr (void) { flags =10; printf("pulse boton start"); fflush(stdout);}
+void button_start_isr (void) { flags =10;}
 
 
 void timer_isr (union sigval value) { flags |= FLAG_TIMER; }
 int timeout (fsm_t* this) { return (flags & FLAG_TIMER); }
 
-int button1_pushed (fsm_t* this) { if(flags==1){return (1);}else {return 0;} }
+/*int button1_pushed (fsm_t* this) { if(flags==1){return (1);}else {return 0;} }
 int button2_pushed (fsm_t* this) { if(flags==2){return (1);}else {return 0;} }
 int button3_pushed (fsm_t* this) { if(flags==3){return (1);}else {return 0;} }
-int button4_pushed (fsm_t* this) { if(flags==4){return (1);}else {return 0;} }
+int button4_pushed (fsm_t* this) { if(flags==4){return (1);}else {return 0;} }*/
 
-int EVENT_BTN_START_END(fsm_t* this) { if(flags==10){return (1);}else {return 0;} }
+int EVENT_BTN_START_END(fsm_t* this) { if(flags==10){printf("Start/end pulsado\n");return (1);}else {return 0;} }
 
 
 void all_Led_Of(fsm_t* this){
@@ -84,7 +84,6 @@ void all_Led_Of(fsm_t* this){
 	digitalWrite(LED_2,0);
 	digitalWrite(LED_3,0);
 	digitalWrite(LED_4,0);
-
 }
 
 void led_On(fsm_t* this, int led){
@@ -96,8 +95,8 @@ void led_On(fsm_t* this, int led){
 
 void randomLedOn(fsm_t* this){
 	all_Led_Of(this);
+	delay(anti_rebote);
 	int randomN = rand() % 4; // Genero numero aleatorio
-	round++;
 	if(randomN == 0){    //enciendo el led
 		led_On(this, LED_1);
 	//	printf("led1"); fflush(stdout);
@@ -122,9 +121,8 @@ void startGame(fsm_t* this){
 	flags=0;
 	ledOn =0;
 	game_time=0;
+    printf("Juego Comenzado\n");
 	randomLedOn(this);
-
-
 }
 void gameOver(fsm_t* this,tmr_t* this1){
 	digitalWrite (LED_START, 1);
@@ -132,6 +130,7 @@ void gameOver(fsm_t* this,tmr_t* this1){
 	digitalWrite (LED_2, 0);
 	digitalWrite (LED_3, 0);
 	digitalWrite (LED_4, 0);
+    printf("Juego Acabado\n");
 
 }
 
@@ -157,34 +156,33 @@ int time_out (fsm_t* this) { return (flags & FLAG_TIMER); }
 
 int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
-		//printf("pulso algo"); fflush(stdout);
 	if(ledOn == LED_1){ if(flags==1){
 		//readTime(this1);
-					fallos++;
-					delay(anti_rebote);
+					round++;
+					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
-				else{ delay(anti_rebote);return (0);
+				else{return (0);
 				}}
 	if(ledOn == LED_2){if(flags==2){
 		//readTime(this1);
-					fallos++;
-					delay(anti_rebote);
+					round++;
+					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
-				else{ delay(anti_rebote);return (0);
+				else{ return (0);
 				}}
 	if(ledOn == LED_3){if(flags==3){
 		//readTime(this1);
-					fallos++;
-					delay(anti_rebote);
+					round++;
+					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
-				else{ delay(anti_rebote);return (0);
+				else{ return (0);
 				}}
 	if(ledOn == LED_4){if(flags==4){
-		//readTime(this1);
-					fallos++;
-					delay(anti_rebote);
+		//readTime(this1)
+					round++;
+					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
-				else{ delay(anti_rebote);return (0);
+				else{return (0);
 				}}}
 	return 0;
 }
@@ -195,35 +193,31 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
 		if(ledOn == LED_1){ if(flags==2 || flags==3 || flags==4){
 			//readTime(this1);
-			printf("fallo"); fflush(stdout);
-			fallos++;
-			delay(anti_rebote);
+			printf("fallo\n"); fflush(stdout);
+			fallos++;round++;
 			return (1);}
-		else{ delay(anti_rebote);return (0);
+		else{ return (0);
 		}}
 		if(ledOn == LED_2){if(flags==1 || flags==3 || flags==4){
 			//readTime(this1);
-			printf("fallo"); fflush(stdout);
-
-			fallos++;
-			delay(anti_rebote);
+			printf("fallo\n"); fflush(stdout);
+			fallos++;round++;
 			return (1);}
-		else{ delay(anti_rebote);return (0);
+		else{return (0);
 		}}
 		if(ledOn == LED_3){if(flags==1 || flags==2 || flags==4){
 			//readTime(this1);
-			printf("fallo"); fflush(stdout);
-			fallos++;delay(anti_rebote);
+			printf("fallo\n"); fflush(stdout);
+			fallos++;round++;
 			return (1);}
-		else{ delay(anti_rebote);return (0);
+		else{return (0);
 		}}
 		if(ledOn == LED_4){if(flags==1 || flags==2 || flags==3){
 			//readTime(this1);
-			printf("fallo"); fflush(stdout);
-
-			fallos++;delay(anti_rebote);
+			printf("fallo\n"); fflush(stdout);
+			fallos++;round++;
 			return (1);}
-		else{ delay(anti_rebote);return (0);
+		else{return (0);
 		}}
 		}
 		return 0;
@@ -238,7 +232,13 @@ int EVENT_END_GAME(fsm_t* this,tmr_t* this1){
 }
 
 void printData(fsm_t* this, tmr_t* this1){
-	printf("tiempo queda = %lld\n", game_time);
+	//printf("tiempo queda = %lld\n", game_time);
+	printf("Rondas = %d\n", round);
+	printf("Fallos = %d\n", fallos);
+	flags=0;
+	delay(anti_rebote);
+
+
 	  //  fflush(stdout); // Will now print everything in the stout buffer
 }
 
@@ -256,7 +256,6 @@ int main(){
 			{-1, NULL, -1,NULL},
 	};
 	fsm_t* machine = fsm_new(WAIT_START,actionList,tmr);
-	//unsigned int next;
 
 	 wiringPiSetupGpio();
 	 pinMode (LED_START, OUTPUT);
@@ -283,9 +282,6 @@ int main(){
 	 wiringPiISR (BUTTON_4, INT_EDGE_RISING, button_4_isr);
 	 wiringPiISR (BUTTON_START, INT_EDGE_RISING, button_start_isr);
 
-//	 apagar (interruptor_tmr_fsm);
-	// next = millis();
-	 //unsigned int next = millis();
 	 while (1) {
 	 fsm_fire (machine);
 	 }

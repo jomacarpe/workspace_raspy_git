@@ -45,3 +45,37 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.lock
+*.log
+*.pdom
+*.xml
+*.index
+*.snap
+*.properties
+*.prefs
+*.resources
+*.fdx
+*.fnm
+*.gen
+*.frq
+*.fdt
+prueba/posix.c
+prueba/interrupcionExterna.c
+prueba/cab.h
+prueba/alarma.c
+*.zip
+.metadata/.plugins/org.eclipse.epp.logging.aeri.ui/history/segments_1
+*.nrm
+*.tii
+*.json
+.metadata/.plugins/org.eclipse.epp.logging.aeri.ui/remote-index/_1.tis
+*.tis
+.metadata/.plugins/org.eclipse.epp.logging.aeri.ui/remote-index/_1.prx
+.metadata/.plugins/org.eclipse.cdt.make.core/specs.cpp
+*.xmi
+.metadata/.plugins/org.eclipse.epp.logging.aeri.ui/remote-index/segments_2
+*.mark
+.metadata/.plugins/org.eclipse.oomph.setup/workspace.setup
+*.mk
+*.d
+*.o

@@ -50,10 +50,9 @@ long long int penalty_time= 3;
 int button_start =0;
 
 int ledOn =0;
-long int timeSeg=0;
-long int timeNseg=0;
 long long int game_time=0;
-int TIMEOUT= 5*1000000;
+int penalty=1000;
+int TIMEOUT= 5000;
 int fallos=0;
 int round=0;
 
@@ -67,9 +66,7 @@ void button_3_isr (void) { flags = 3; }
 void button_4_isr (void) { flags = 4; }
 void button_start_isr (void) { flags =10;}
 
-
-void timer_isr (union sigval value) { flags |= FLAG_TIMER; }
-int timeout (fsm_t* this) { return (flags & FLAG_TIMER); }
+void timer_isr (union sigval value) { flags = 20; }
 
 /*int button1_pushed (fsm_t* this) { if(flags==1){return (1);}else {return 0;} }
 int button2_pushed (fsm_t* this) { if(flags==2){return (1);}else {return 0;} }
@@ -110,7 +107,7 @@ void randomLedOn(fsm_t* this){
 		led_On(this, LED_4);
 	//	printf("led4"); fflush(stdout);
 	}
-//	tmr_startms((tmr_t*)(this->user_data), TIMEOUT);
+	tmr_startms((tmr_t*)(this->user_data), TIMEOUT);
 	flags=0;
 }
 
@@ -145,40 +142,41 @@ void turnOff(fsm_t* this){
 }
 
 int time_out (fsm_t* this) { return (flags & FLAG_TIMER); }
+int timeout (fsm_t* this) { return (flags & FLAG_TIMER); }
 
-/*int readTime(tmr_t* this){
+int readTime(tmr_t* this){
  	timer_gettime (this->timerid, &(this->spec));
- 	game_time= ((TIMEOUT/1000  - this->spec.it_value.tv_sec)*1000000000) +
- 			(1000000000 -this->spec.it_value.tv_nsec);
+ 	game_time= ((TIMEOUT/1000  - this->spec.it_value.tv_sec)*1000) +
+ 			((1000000000 -this->spec.it_value.tv_nsec)/1000000);
     return game_time;
 
-}*/
+}
 
 int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
 	if(ledOn == LED_1){ if(flags==1){
-		//readTime(this1);
+	             	game_time+=readTime(this1);
 					round++;
 					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
 				else{return (0);
 				}}
 	if(ledOn == LED_2){if(flags==2){
-		//readTime(this1);
+     	game_time+=readTime(this1);
 					round++;
 					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
 				else{ return (0);
 				}}
 	if(ledOn == LED_3){if(flags==3){
-		//readTime(this1);
+     	game_time+=readTime(this1);
 					round++;
 					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
 				else{ return (0);
 				}}
 	if(ledOn == LED_4){if(flags==4){
-		//readTime(this1)
+     	game_time+=readTime(this1);
 					round++;
 					printf("pulso acierto\n"); fflush(stdout);
 					return (1);}
@@ -190,37 +188,42 @@ int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL 
 
 
 int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
-	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
+	if(flags==1 || flags==2 || flags==3 || flags==4 || flags==20){  //compruebo si pulse algun boton
 		if(ledOn == LED_1){ if(flags==2 || flags==3 || flags==4){
-			//readTime(this1);
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
+			game_time+=penalty;
 			return (1);}
 		else{ return (0);
 		}}
 		if(ledOn == LED_2){if(flags==1 || flags==3 || flags==4){
-			//readTime(this1);
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
+			game_time+=penalty;
 			return (1);}
 		else{return (0);
 		}}
 		if(ledOn == LED_3){if(flags==1 || flags==2 || flags==4){
-			//readTime(this1);
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
+			game_time+=penalty;
 			return (1);}
 		else{return (0);
 		}}
 		if(ledOn == LED_4){if(flags==1 || flags==2 || flags==3){
-			//readTime(this1);
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
+			game_time+=penalty;
 			return (1);}
 		else{return (0);
 		}}
+		if(flags==20){
+			fallos++;round++;
+			game_time+=penalty;
+			printf("timeout\n");
+			return 1;
 		}
-		return 0;
+	}return 0;
 
 }
 
@@ -235,8 +238,8 @@ void printData(fsm_t* this, tmr_t* this1){
 	//printf("tiempo queda = %lld\n", game_time);
 	printf("Rondas = %d\n", round);
 	printf("Fallos = %d\n", fallos);
+	delay(anti_rebote+900);
 	flags=0;
-	delay(anti_rebote+300);
 
 
 	  //  fflush(stdout); // Will now print everything in the stout buffer

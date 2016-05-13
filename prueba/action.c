@@ -97,7 +97,6 @@ void led_On(fsm_t* this, int led){
 void randomLedOn(fsm_t* this){
 	all_Led_Of(this);
 	int randomN = rand() % 4; // Genero numero aleatorio
-	round++;
 	if(randomN == 0){    //enciendo el led
 		led_On(this, LED_1);
 	//	printf("led1"); fflush(stdout);
@@ -157,32 +156,32 @@ int time_out (fsm_t* this) { return (flags & FLAG_TIMER); }
 
 int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
-		//printf("pulso algo"); fflush(stdout);
+		printf("pulso algo"); fflush(stdout);
 	if(ledOn == LED_1){ if(flags==1){
 		//readTime(this1);
-					fallos++;
 					delay(anti_rebote);
+					round++;
 					return (1);}
 				else{ delay(anti_rebote);return (0);
 				}}
 	if(ledOn == LED_2){if(flags==2){
 		//readTime(this1);
-					fallos++;
 					delay(anti_rebote);
+					round++;
 					return (1);}
 				else{ delay(anti_rebote);return (0);
 				}}
 	if(ledOn == LED_3){if(flags==3){
 		//readTime(this1);
-					fallos++;
 					delay(anti_rebote);
+					round++;
 					return (1);}
 				else{ delay(anti_rebote);return (0);
 				}}
 	if(ledOn == LED_4){if(flags==4){
 		//readTime(this1);
-					fallos++;
 					delay(anti_rebote);
+					round++;
 					return (1);}
 				else{ delay(anti_rebote);return (0);
 				}}}
@@ -196,7 +195,7 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 		if(ledOn == LED_1){ if(flags==2 || flags==3 || flags==4){
 			//readTime(this1);
 			printf("fallo"); fflush(stdout);
-			fallos++;
+			fallos++;round++;
 			delay(anti_rebote);
 			return (1);}
 		else{ delay(anti_rebote);return (0);
@@ -204,8 +203,7 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 		if(ledOn == LED_2){if(flags==1 || flags==3 || flags==4){
 			//readTime(this1);
 			printf("fallo"); fflush(stdout);
-
-			fallos++;
+			fallos++;round++;
 			delay(anti_rebote);
 			return (1);}
 		else{ delay(anti_rebote);return (0);
@@ -213,15 +211,16 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 		if(ledOn == LED_3){if(flags==1 || flags==2 || flags==4){
 			//readTime(this1);
 			printf("fallo"); fflush(stdout);
-			fallos++;delay(anti_rebote);
+			fallos++;round++;
+			delay(anti_rebote);
 			return (1);}
 		else{ delay(anti_rebote);return (0);
 		}}
 		if(ledOn == LED_4){if(flags==1 || flags==2 || flags==3){
 			//readTime(this1);
 			printf("fallo"); fflush(stdout);
-
-			fallos++;delay(anti_rebote);
+			fallos++;round++;
+			delay(anti_rebote);
 			return (1);}
 		else{ delay(anti_rebote);return (0);
 		}}

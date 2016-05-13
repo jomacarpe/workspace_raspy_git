@@ -65,7 +65,7 @@ void button_1_isr (void) { flags = 1; }
 void button_2_isr (void) { flags = 2; }
 void button_3_isr (void) { flags = 3; }
 void button_4_isr (void) { flags = 4; }
-void button_start_isr (void) { flags =10;}
+void button_start_isr (void) { flags =10;printf("PULSADOOO\n");}
 
 
 void timer_isr (union sigval value) { flags |= FLAG_TIMER; }
@@ -235,8 +235,8 @@ void printData(fsm_t* this, tmr_t* this1){
 	//printf("tiempo queda = %lld\n", game_time);
 	printf("Rondas = %d\n", round);
 	printf("Fallos = %d\n", fallos);
+	delay(anti_rebote+900);
 	flags=0;
-	delay(anti_rebote+300);
 
 
 	  //  fflush(stdout); // Will now print everything in the stout buffer

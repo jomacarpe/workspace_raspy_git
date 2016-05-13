@@ -236,7 +236,7 @@ void printData(fsm_t* this, tmr_t* this1){
 	printf("Rondas = %d\n", round);
 	printf("Fallos = %d\n", fallos);
 	flags=0;
-	delay(anti_rebote);
+	delay(anti_rebote+300);
 
 
 	  //  fflush(stdout); // Will now print everything in the stout buffer

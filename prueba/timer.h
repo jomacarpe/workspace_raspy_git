@@ -22,5 +22,7 @@ void tmr_init (tmr_t* this, notify_func_t isr);
 void tmr_destroy(tmr_t* this);
 void tmr_startms(tmr_t* this, int ms);
 void tmr_stop (tmr_t* this);
+int readTime(tmr_t* this,int TIMEOUT);
+
 
 #endif /* TIMER_H_ */

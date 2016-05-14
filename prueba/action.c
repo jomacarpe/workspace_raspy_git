@@ -24,7 +24,7 @@
 #define LED_2 13
 
 #define BUTTON_3 11
-#define LED_3 5
+#define LED_3 6
 
 #define BUTTON_4 27
 #define LED_4 22
@@ -44,17 +44,14 @@
 /*#define buttonsArray [] = {BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, 100};*/
 #define ledsArray [] = {LED_1, LED_2, LED_3, LED_4};
 
-long long int penalty_time= 3;
-
-
-int button_start =0;
-
+int penalty_time= 3;
 int ledOn =0;
-long long int game_time=0;
-int penalty=1000;
+long int game_time=0;
+int penalty=5000;
 int TIMEOUT= 5000;
 int fallos=0;
 int round=0;
+int numero_rounds=8;
 
 
 //digitalWrite (LED_START, 1);
@@ -66,7 +63,7 @@ void button_3_isr (void) { flags = 3; }
 void button_4_isr (void) { flags = 4; }
 void button_start_isr (void) { flags =10;}
 
-void timer_isr (union sigval value) { flags = 20; }
+void timer_isr (union sigval value) { printf("tiempo cumplido, flag a 20\n"); flags = 20; }
 
 /*int button1_pushed (fsm_t* this) { if(flags==1){return (1);}else {return 0;} }
 int button2_pushed (fsm_t* this) { if(flags==2){return (1);}else {return 0;} }
@@ -144,45 +141,30 @@ void turnOff(fsm_t* this){
 int time_out (fsm_t* this) { return (flags & FLAG_TIMER); }
 int timeout (fsm_t* this) { return (flags & FLAG_TIMER); }
 
-int readTime(tmr_t* this){
- 	timer_gettime (this->timerid, &(this->spec));
- 	game_time= ((TIMEOUT/1000  - this->spec.it_value.tv_sec)*1000) +
- 			((1000000000 -this->spec.it_value.tv_nsec)/1000000);
-    return game_time;
 
-}
-
-int EVENT_BTN_OK(fsm_t* this,tmr_t* this1){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
+int EVENT_BTN_OK(fsm_t* this){ //METODO QUE INDICA SI SE APRETO EL BOTON CORRECTO
 	if(flags==1 || flags==2 || flags==3 || flags==4){  //compruebo si pulse algun boton
 	if(ledOn == LED_1){ if(flags==1){
-	             	game_time+=readTime(this1);
+	    game_time+=readTime((tmr_t*)(this->user_data),TIMEOUT);
+		printf("Tiempo_juego = %d\n",readTime((tmr_t*)(this->user_data),TIMEOUT)); fflush(stdout);
 					round++;
-					printf("pulso acierto\n"); fflush(stdout);
-					return (1);}
-				else{return (0);
-				}}
+					return (1);}}
 	if(ledOn == LED_2){if(flags==2){
-     	game_time+=readTime(this1);
+     	game_time+=readTime((tmr_t*)(this->user_data),TIMEOUT);
+		printf("Tiempo_juego = %d\n",readTime((tmr_t*)(this->user_data),TIMEOUT)); fflush(stdout);
 					round++;
-					printf("pulso acierto\n"); fflush(stdout);
-					return (1);}
-				else{ return (0);
-				}}
+					return (1);}}
 	if(ledOn == LED_3){if(flags==3){
-     	game_time+=readTime(this1);
+     	game_time+=readTime((tmr_t*)(this->user_data),TIMEOUT);
+		printf("Tiempo_juego = %d\n",readTime((tmr_t*)(this->user_data),TIMEOUT)); fflush(stdout);
 					round++;
-					printf("pulso acierto\n"); fflush(stdout);
-					return (1);}
-				else{ return (0);
-				}}
+					return (1);}}
 	if(ledOn == LED_4){if(flags==4){
-     	game_time+=readTime(this1);
+     	game_time+=readTime((tmr_t*)(this->user_data),TIMEOUT);
+		printf("Tiempo_juego = %d\n",readTime((tmr_t*)(this->user_data),TIMEOUT)); fflush(stdout);
 					round++;
-					printf("pulso acierto\n"); fflush(stdout);
-					return (1);}
-				else{return (0);
-				}}}
-	return 0;
+					return (1);}}
+	}return 0;
 }
 
 
@@ -193,33 +175,29 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
 			game_time+=penalty;
-			return (1);}
-		else{ return (0);
+			return (1);
 		}}
 		if(ledOn == LED_2){if(flags==1 || flags==3 || flags==4){
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
 			game_time+=penalty;
-			return (1);}
-		else{return (0);
+			return (1);
 		}}
 		if(ledOn == LED_3){if(flags==1 || flags==2 || flags==4){
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
 			game_time+=penalty;
-			return (1);}
-		else{return (0);
+			return (1);
 		}}
 		if(ledOn == LED_4){if(flags==1 || flags==2 || flags==3){
 			printf("fallo\n"); fflush(stdout);
 			fallos++;round++;
 			game_time+=penalty;
-			return (1);}
-		else{return (0);
-		}}
+			return (1);}}
 		if(flags==20){
 			fallos++;round++;
 			game_time+=penalty;
+			//game_time+=penalty;
 			printf("timeout\n");
 			return 1;
 		}
@@ -228,7 +206,8 @@ int EVENT_BTN_FAIL(fsm_t* this,tmr_t* this1){
 }
 
 int EVENT_END_GAME(fsm_t* this,tmr_t* this1){
-	if(round>=5 /*|| fallos >= btn_fail_max*/){
+	if(round>=numero_rounds /*|| fallos >= btn_fail_max*/){
+		//tmr_stop ((tmr_t*)(this->user_data));
 		return 1;
 	}
 	return 0;
@@ -238,13 +217,13 @@ void printData(fsm_t* this, tmr_t* this1){
 	//printf("tiempo queda = %lld\n", game_time);
 	printf("Rondas = %d\n", round);
 	printf("Fallos = %d\n", fallos);
-	delay(anti_rebote+300);
+	printf("Tiempo de juego total = %d\n", game_time);
+	delay(anti_rebote);
 	flags=0;
 
 
 	  //  fflush(stdout); // Will now print everything in the stout buffer
 }
-
 
 int main(){
 	//Lista de transiciones
@@ -259,7 +238,6 @@ int main(){
 			{-1, NULL, -1,NULL},
 	};
 	fsm_t* machine = fsm_new(WAIT_START,actionList,tmr);
-
 	 wiringPiSetupGpio();
 	 pinMode (LED_START, OUTPUT);
 	 digitalWrite(LED_START, 1);

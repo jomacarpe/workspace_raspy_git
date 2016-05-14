@@ -28,6 +28,16 @@ void tmr_destroy(tmr_t* this)
     tmr_stop (this);
     free(this);
 }
+int readTime(tmr_t* this,int TIMEOUT){
+	int a=0;
+ 	timer_gettime (this->timerid, &(this->spec));
+ 	a= (this->spec.it_value.tv_sec*1000) +
+ 			(this->spec.it_value.tv_nsec/1000000);
+    return TIMEOUT-a;
+ //	return ((this->spec.it_value.tv_sec)*1000)+((this->spec.it_value.tv_nsec)/1000000);
+
+}
+
 void tmr_startms(tmr_t* this, int ms) {
 	this->spec.it_value.tv_sec = ms / 1000;
 	this->spec.it_value.tv_nsec = (ms % 1000) * 1000000;
